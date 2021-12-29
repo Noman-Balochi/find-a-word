@@ -55,24 +55,60 @@ def levels(levelName,level_word_list,live):
         print(original_word+str(len(original_word)))
 
 def Beginnerlevel():
-    levels("Beginner",bigner_word_list,15)
+    global levelName
+    levelName = "Beginner"
+    levels(levelName,bigner_word_list,15)
 
 def MediumLevel():
-    levels("Medium",medium_word_list,20)
-
+    global levelName
+    levelName = "Medium"
+    levels(levelName,medium_word_list,20)
 
 def AdvanceLevel():
-    levels("Advance",advance_word_list,15)
-    
+    global levelName
+    levelName = "Advance"
+    levels(levelName,advance_word_list,15)
         
-    
+def choice(option):
+   pop.destroy()
+   if option == "yes":
+        if(levelName == "Beginner"):
+            Beginnerlevel()
+        elif(levelName == "Medium"):
+            MediumLevel()
+        elif(levelName == "Advance"):
+            AdvanceLevel()
+   else:
+       back()
+
+def click_fun():
+   global pop, WinOrLoss
+   pop = Toplevel(root)
+   pop.title("Confirmation")
+   pop.geometry("550x200")
+   pop.config(bg="#379b9e")
+   # Create a Label Text\
+   WinOrLoss = Label(pop, font=('Aerial', 12), bg='#379b9e')
+   WinOrLoss.place(x=170,y=20)
+   Label(pop, text="Would You like to Play Again?",font=('Aerial', 12,"bold"),fg="white", bg='#379b9e').place(x=170,y=70)
+   # Add a Frame
+   frame = Frame(pop, bg='#379b9e',width=130,height=34)
+   frame.place(x=200,y=120)
+   # Add Button for making selection
+   button1 = Button(frame, text="Yes",font=('Aerial', 12,"bold"), command=lambda: choice("yes"), bg="blue", fg="white",width=5,height=1)
+   button1.place(x=0,y=0)
+   button2 = Button(frame, text="No", font=('Aerial', 12,"bold"),command=lambda: choice("no"), bg="blue", fg="white",width=5,height=1)
+   button2.place(x=70,y=0)
+   
 
 def EnterKey():
     global player_lbl_Name , level_lbl, guess_lbl_list_Name, guess_Word_lbl, remaining_live_lbl, guess_word, original_word, remarks_lbl, enter_guess_charecter, lives
     global wrong_list, all_guess_list,btn_Entered_Char
 
     char = enter_guess_charecter.get()
+    char = char.lower()
     remarks_lbl.config(text="",fg="green")
+
     if(lives > 1):
         lives = lives - 1
         if(lives < 4):
@@ -96,7 +132,9 @@ def EnterKey():
                 if original_word[i] == char:
                     guess_word[i]=original_word[i]
 
-            remarks_lbl.config(text="Wow! it match!",fg="green")
+            match_comint_list = ["YoY! Got it","That right!","That it","Good Job!","Nice!",""]
+            commint = random.choice(match_comint_list)
+            remarks_lbl.config(text=commint,fg="green")
         else:
             # """if guessed_letter is not in original_word 
             # prompt user for wrong chosen letter"""
@@ -105,8 +143,6 @@ def EnterKey():
             
 
         all_guess_list.append(char)
-        # print(all_guess_list)
-        # print(wrong_list)
         guess_word = [i for i in guess_word]
         guess_word_string = "".join(guess_word)
 
@@ -115,16 +151,21 @@ def EnterKey():
         
         if original_word == guess_word_string:
             # print("You win")
-            remarks_lbl.config(text='YAY !!, You have Got the letter ...',fg="green")
+            # remarks_lbl.config(text='YAY !!, You have Got the letter ...',fg="green")
             btn_Entered_Char.config(state="disabled")
             enter_guess_charecter.config(state="disabled")
+            click_fun()
+            WinOrLoss.config(text="YAY !!, You Win...",fg="green")
         
        
     else:
-        messagebox.showwarning("Game Over","You Feild!")
+        # messagebox.showwarning("Game Over","You Feild!")
         remaining_live_lbl.config(text="0",fg="red")
         btn_Entered_Char.config(state="disabled")
         enter_guess_charecter.config(state="disabled")
+        click_fun()
+        WinOrLoss.config(text="Game Over You Feild!",fg="red")
+
 
     enter_guess_charecter.delete(0, 'end')
     
@@ -158,14 +199,14 @@ def btnlevel(levelVar,txt_x_axis,txt_y_axis,btn_x_axis,btn_y_axis):
 
     global Imgforbtn
     if(levelVar == "beginner"):
-        # imgPath = "G:\\python tutorials\\find word\\projectWord\\level-1.png"
-        imgPath = ".\\projectWord\\level-1.png"
+        imgPath = "G:\\python tutorials\\find word\\projectWord\\level-1.png"
+        # imgPath = "level-1.png"
     elif(levelVar=="medium"):
-        # imgPath = "G:\\python tutorials\\find word\\projectWord\\level-2.png"
-        imgPath = ".\\projectWord\\level-2.png"
+        imgPath = "G:\\python tutorials\\find word\\projectWord\\level-2.png"
+        # imgPath = "level-2.png"
     elif(levelVar=="advance"):
-        # imgPath = "G:\\python tutorials\\find word\\projectWord\\level-3.png"
-        imgPath = ".\\projectWord\\level-3.png"
+        imgPath = "G:\\python tutorials\\find word\\projectWord\\level-3.png"
+        # imgPath = "level-3.png"
         
     Img = Image.open(imgPath)
     Img_resize = Img.resize((170, 170))
@@ -267,7 +308,7 @@ def MainScreen():
 
     ############# Remarks (msg) ############3
     remarks_lbl = Label(frame_center,font=(str(font_list[13]),"14","bold"),fg="white",bg=center_color) # Message Label for match wind loos 
-    remarks_lbl.place(x=100,y=290)
+    remarks_lbl.place(x=50,y=290)
 
     ########  Right side framee ###########################
     frame_right_side = Frame(mainframe,highlightbackground=center_color,bg=lrcolor, highlightthickness=4,width=200, height=358, bd= 0)
@@ -282,14 +323,13 @@ def MainScreen():
     all_guessed_list_lbl = Label(frame_right_side,text="" ,font=(str(font_list[120]),"18","normal"),fg="#00ff41",bg=lrcolor) # Remaining Live Number
     all_guessed_list_lbl.place(x=0,y=120)
 
-
 ############### main frame ##################### 
 mainframe = Frame(root, height=360, width=800, bg=mainframeColor )
 mainframe.place(x=0,y=102)
 
 # global Get_Img
 # img_path = "G:\\python tutorials\\find word\\projectWord\\button-1.png"
-img_path = ".\\projectWord\\button-1.png"
+img_path = "G:\\python tutorials\\find word\\projectWord\\headerimg.png"
 
 headerframe = Frame(root, height=100, width=800,bg=headingColor)
 headerframe.place(x=0,y=0)
